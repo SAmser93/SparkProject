@@ -22,6 +22,11 @@ import java.util.List;
 
 public class Task {
 
+    /*
+        Упрощения:
+        1.Не успел настроить Hive SQL, так что воспользуюсь пока обычной Postgres
+     */
+
     private static final String POI_CSV_FILE_PATH = "src/main/resources/places_of_interest.csv";
     private static final String PERS_LOC_CSV_FILE_PATH = "src/main/resources/persona_locations.csv";
 
@@ -68,31 +73,6 @@ public class Task {
         }
 
         return places;
-    }
-
-    /*
-        Метод "Предложить персоне 3 популярных места".
-        Идея:
-        1. Присылаем данные о пользователе, смотрим, где он живёт.
-        2. Отбираем пользователей, где он живёт, считаем их посещения в виде мапы "Ид_места, посещения"
-        3. Сортируем по популярности и выводим
-     */
-    public List<PlaceOfInterest> recommendPopularPlaces(Persona p){
-        ArrayList<PlaceOfInterest> res = new ArrayList<>();
-        return res;
-    }
-
-    /*
-        Метод "Предложить персоне 3 места, что понравятся ему".
-        Идея:
-        1. Присылаем данные о пользователе, смотрим, в каких местах он (предположительно) был.
-        2. Отбираем пользователей, которые были в тех же местах, в которых был он, считаем их посещения в виде мапы "Ид_места, посещения"
-            * Это лобовой вариант. Скорее всего, нужно будет ещё добавить условие "Учитывать персон, которые были в как минимум 3х тех же местах, что и ты"
-        3. Сортируем по популярности и выводим
-     */
-    public List<PlaceOfInterest> recommendPlacesForPerson(Persona p){
-        ArrayList<PlaceOfInterest> res = new ArrayList<>();
-        return res;
     }
 
     public static void main(String[] args) {
@@ -149,7 +129,7 @@ public class Task {
         System.out.println(top2);
 
         Persona persona = new Persona(1, "Vova");
-
+        System.out.println(PlacesRecommender.recommendPopularPlaces(persona));
 
     }
 

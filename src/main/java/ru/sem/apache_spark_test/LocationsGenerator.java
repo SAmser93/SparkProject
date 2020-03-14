@@ -3,6 +3,7 @@ package ru.sem.apache_spark_test;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import ru.sem.apache_spark_test.dao.PlacesRecommenderDAO;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 
@@ -15,6 +16,21 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LocationsGenerator {
+
+    private static void insertToCSV(CSVPrinter printer, PersonaLocation pl){
+        try {
+            printer.printRecord(
+                    pl.getPersonaId(),
+                    pl.getDateTime(),
+                    pl.getLatitude(),
+                    pl.getLatitude(),
+                    pl.getAreaId(),
+                    pl.getDate()
+            );
+        } catch (Exception z) {
+            z.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -38,6 +54,8 @@ public class LocationsGenerator {
             e.printStackTrace();
         }
 
+        PlacesRecommenderDAO.clearLocations();
+
         try {
             FileWriter out = new FileWriter(pers_locCSVFilePath);
             CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT
@@ -50,16 +68,18 @@ public class LocationsGenerator {
                 int placesNum = ThreadLocalRandom.current().nextInt(2, 5);
                 for(int j = 0; j < placesNum; j++) {
                     PlaceOfInterest randomPOI = places.get(ThreadLocalRandom.current().nextInt(places.size()-1));
-                    printer.printRecord(
+                    PersonaLocation tempPl = new PersonaLocation(
                             i+1,
-                            randomPOI.getDate()+"0"+ThreadLocalRandom.current().nextInt(1, 9),
+                            randomPOI.getDate().substring(0, randomPOI.getDate().length() - 2)+"0"+ThreadLocalRandom.current().nextInt(1, 9),
                             //окрестности выбранного poi
-                            ThreadLocalRandom.current().nextDouble(Math.floor(randomPOI.getLatitude()), Math.ceil(randomPOI.getLatitude())),
-                            ThreadLocalRandom.current().nextDouble(Math.floor(randomPOI.getLongitude()), Math.ceil(randomPOI.getLongitude())),
+                            ThreadLocalRandom.current().nextDouble(randomPOI.getLatitude()-0.1f, randomPOI.getLatitude())+0.1f,
+                            ThreadLocalRandom.current().nextDouble(randomPOI.getLongitude()-0.1f, randomPOI.getLongitude()+0.1f),
                             randomPOI.getAreaId(),
                             randomPOI.getDate(),
                             randomPOI.getId()
-                    );
+                            );
+                    insertToCSV(printer, tempPl);
+                    PlacesRecommenderDAO.insertLocation(tempPl);
                 }
             }
             out.flush();
