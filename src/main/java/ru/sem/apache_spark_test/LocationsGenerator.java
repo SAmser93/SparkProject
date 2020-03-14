@@ -43,7 +43,7 @@ public class LocationsGenerator {
             CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT
                     .withHeader(Arrays.toString(PersonaLocation.HEADERS))
                     .withFirstRecordAsHeader());
-            printer.printRecord((Object) PersonaLocation.HEADERS);
+            printer.printRecord(PersonaLocation.HEADERS);
             int personsNum = ThreadLocalRandom.current().nextInt(7, 15);
             System.out.println("personsNum = " + personsNum);
             for(int i = 0; i < personsNum; i++) {
@@ -57,7 +57,8 @@ public class LocationsGenerator {
                             ThreadLocalRandom.current().nextDouble(Math.floor(randomPOI.getLatitude()), Math.ceil(randomPOI.getLatitude())),
                             ThreadLocalRandom.current().nextDouble(Math.floor(randomPOI.getLongitude()), Math.ceil(randomPOI.getLongitude())),
                             randomPOI.getAreaId(),
-                            randomPOI.getDate()
+                            randomPOI.getDate(),
+                            randomPOI.getId()
                     );
                 }
             }

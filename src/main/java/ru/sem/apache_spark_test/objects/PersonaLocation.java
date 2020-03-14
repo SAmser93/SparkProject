@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class PersonaLocation implements Serializable {
 
-    public static final String[] HEADERS = { "Persona_id", "Date_time", "Latitude", "Longitude", "Area_id", "Date"};
+    public static final String[] HEADERS = { "Persona_id", "Date_time", "Latitude", "Longitude", "Area_id", "Date", "poiID"};
 
 /*
     •	Идентификатор персоны
@@ -23,14 +23,16 @@ public class PersonaLocation implements Serializable {
     private double longitude;
     private int areaId;
     private String date;
+    private int poiID; //Нет в требованиях, но так удобнее тестировать
 
-    public PersonaLocation(int personaId, String dateTime, double latitude, double longitude, int areaId, String date) {
+    public PersonaLocation(int personaId, String dateTime, double latitude, double longitude, int areaId, String date, int poiID) {
         this.personaId = personaId;
         this.dateTime = dateTime;
         this.latitude = latitude;
         this.longitude = longitude;
         this.areaId = areaId;
         this.date = date;
+        this.poiID = poiID;
     }
 
     public PersonaLocation(CSVRecord record) {
@@ -40,6 +42,7 @@ public class PersonaLocation implements Serializable {
         this.longitude = Double.parseDouble(record.get(HEADERS[3]));
         this.areaId = Integer.parseInt(record.get(HEADERS[4]));
         this.date = record.get(HEADERS[5]);
+        this.poiID = Integer.parseInt(record.get(HEADERS[6]));
     }
 
     public int getPersonaId() {
@@ -89,4 +92,8 @@ public class PersonaLocation implements Serializable {
     public void setDate(String date) {
         this.date = date;
     }
+
+    public int getPoiID() { return poiID; }
+
+    public void setPoiID(int poiID) { this.poiID = poiID; }
 }

@@ -6,6 +6,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import ru.sem.apache_spark_test.objects.Persona;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 import scala.Tuple2;
@@ -69,6 +70,31 @@ public class Task {
         return places;
     }
 
+    /*
+        Метод "Предложить персоне 3 популярных места".
+        Идея:
+        1. Присылаем данные о пользователе, смотрим, где он живёт.
+        2. Отбираем пользователей, где он живёт, считаем их посещения в виде мапы "Ид_места, посещения"
+        3. Сортируем по популярности и выводим
+     */
+    public List<PlaceOfInterest> recommendPopularPlaces(Persona p){
+        ArrayList<PlaceOfInterest> res = new ArrayList<>();
+        return res;
+    }
+
+    /*
+        Метод "Предложить персоне 3 места, что понравятся ему".
+        Идея:
+        1. Присылаем данные о пользователе, смотрим, в каких местах он (предположительно) был.
+        2. Отбираем пользователей, которые были в тех же местах, в которых был он, считаем их посещения в виде мапы "Ид_места, посещения"
+            * Это лобовой вариант. Скорее всего, нужно будет ещё добавить условие "Учитывать персон, которые были в как минимум 3х тех же местах, что и ты"
+        3. Сортируем по популярности и выводим
+     */
+    public List<PlaceOfInterest> recommendPlacesForPerson(Persona p){
+        ArrayList<PlaceOfInterest> res = new ArrayList<>();
+        return res;
+    }
+
     public static void main(String[] args) {
         final JavaSparkContext sc = new JavaSparkContext(
                 new SparkConf()
@@ -95,7 +121,7 @@ public class Task {
                 Всё это джойнить в некий общий объект, полагаю. Причём ещё надо по дате проверять.
                 Делать мапу "Персона - пары посещений объектов". Из этого потом можно считать популярность
             2. Лобовой вариант - показывать данные в виде "3 места на персону, отсортированные по кол-ву посещений"
-            3. Менее лобовой - матрица смежности (как-то не так зовётся) с теми местами, куда ходили другие люди с этого объекта
+            3. Менее лобовой - матрица смежности с теми местами, куда ходили другие люди с этого объекта
          */
 
         //2 Сначала всё таки с местами
@@ -121,6 +147,8 @@ public class Task {
         );
 
         System.out.println(top2);
+
+        Persona persona = new Persona(1, "Vova");
 
 
     }
