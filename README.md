@@ -1,0 +1,2 @@
+# SparkProject
+Places recommendations app
