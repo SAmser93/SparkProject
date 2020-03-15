@@ -3,10 +3,13 @@ package ru.sem.apache_spark_test.objects;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
 
 public class PersonaLocation implements Serializable {
 
-    public static final String[] HEADERS = { "Persona_id", "Date_time", "Latitude", "Longitude", "Area_id", "Date", "poiID"};
+    public static final String[] HEADERS = { "Persona_id", "Date_time", "Latitude", "Longitude", "Area_id", "Date",
+            "poiID" //Для тестирования
+    };
 
 /*
     •	Идентификатор персоны
@@ -23,16 +26,16 @@ public class PersonaLocation implements Serializable {
     private double longitude;
     private int areaId;
     private String date;
-    private int poiID; //Нет в требованиях, но так удобнее тестировать
 
-    public PersonaLocation(int personaId, String dateTime, double latitude, double longitude, int areaId, String date, int poiID) {
+    public PersonaLocation() {}
+
+    public PersonaLocation(int personaId, String dateTime, double latitude, double longitude, int areaId, String date) {
         this.personaId = personaId;
         this.dateTime = dateTime;
         this.latitude = latitude;
         this.longitude = longitude;
         this.areaId = areaId;
         this.date = date;
-        this.poiID = poiID;
     }
 
     public PersonaLocation(CSVRecord record) {
@@ -42,7 +45,21 @@ public class PersonaLocation implements Serializable {
         this.longitude = Double.parseDouble(record.get(HEADERS[3]));
         this.areaId = Integer.parseInt(record.get(HEADERS[4]));
         this.date = record.get(HEADERS[5]);
-        this.poiID = Integer.parseInt(record.get(HEADERS[6]));
+    }
+
+    public PersonaLocation parseFromResultSet(ResultSet rsSelect) {
+        try{
+            this.personaId = rsSelect.getInt(HEADERS[0]);
+            this.dateTime = rsSelect.getString(HEADERS[1]);
+            this.latitude = rsSelect.getDouble(HEADERS[2]);
+            this.longitude = rsSelect.getDouble(HEADERS[3]);
+            this.areaId = rsSelect.getInt(HEADERS[4]);
+            this.date = rsSelect.getString(HEADERS[5]);
+        } catch (Exception z){
+            z.printStackTrace();
+            return null;
+        }
+        return this;
     }
 
     public int getPersonaId() {
@@ -92,8 +109,4 @@ public class PersonaLocation implements Serializable {
     public void setDate(String date) {
         this.date = date;
     }
-
-    public int getPoiID() { return poiID; }
-
-    public void setPoiID(int poiID) { this.poiID = poiID; }
 }

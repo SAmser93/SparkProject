@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class LocationsGenerator {
 
-    private static void insertToCSV(CSVPrinter printer, PersonaLocation pl){
+    private static void insertToCSV(CSVPrinter printer, PersonaLocation pl, PlaceOfInterest randomPOI){
         try {
             printer.printRecord(
                     pl.getPersonaId(),
@@ -25,7 +25,8 @@ public class LocationsGenerator {
                     pl.getLatitude(),
                     pl.getLatitude(),
                     pl.getAreaId(),
-                    pl.getDate()
+                    pl.getDate(),
+                    randomPOI.getId()
             );
         } catch (Exception z) {
             z.printStackTrace();
@@ -75,10 +76,9 @@ public class LocationsGenerator {
                             ThreadLocalRandom.current().nextDouble(randomPOI.getLatitude()-0.1f, randomPOI.getLatitude())+0.1f,
                             ThreadLocalRandom.current().nextDouble(randomPOI.getLongitude()-0.1f, randomPOI.getLongitude()+0.1f),
                             randomPOI.getAreaId(),
-                            randomPOI.getDate(),
-                            randomPOI.getId()
+                            randomPOI.getDate()
                             );
-                    insertToCSV(printer, tempPl);
+                    insertToCSV(printer, tempPl, randomPOI);
                     PlacesRecommenderDAO.insertLocation(tempPl);
                 }
             }
