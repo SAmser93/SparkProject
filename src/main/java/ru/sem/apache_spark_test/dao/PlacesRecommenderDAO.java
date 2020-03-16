@@ -45,17 +45,17 @@ public class PlacesRecommenderDAO {
 
     public static boolean insertLocation(PersonaLocation pl) {
 
-        logger.info("insert persona_locations fro p.id -> {}", pl.getPersonaId());
+        logger.info("insert persona_locations fro p.id -> {}", pl.getPersona_id());
 
         try(final Connection connection = DataSource.getConnection();
             final PreparedStatement pstm = connection.prepareStatement(INSERT_LOCATION_SQL)){
             //TODO: batch update
             int i = 0;
-            pstm.setInt(++i, pl.getPersonaId());
-            pstm.setString(++i, pl.getDateTime());
+            pstm.setInt(++i, pl.getPersona_id());
+            pstm.setString(++i, pl.getDate_time());
             pstm.setDouble(++i, pl.getLatitude());
             pstm.setDouble(++i, pl.getLongitude());
-            pstm.setInt(++i, pl.getAreaId());
+            pstm.setInt(++i, pl.getArea_id());
             pstm.setString(++i, pl.getDate());
             pstm.executeUpdate();
         } catch (Exception z) {

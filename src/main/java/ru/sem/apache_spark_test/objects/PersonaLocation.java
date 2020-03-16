@@ -1,15 +1,24 @@
 package ru.sem.apache_spark_test.objects;
 
 import org.apache.commons.csv.CSVRecord;
+import org.apache.spark.sql.types.StructType;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
 
 public class PersonaLocation implements Serializable {
 
-    public static final String[] HEADERS = { "Persona_id", "Date_time", "Latitude", "Longitude", "Area_id", "Date",
-            "poiID" //Для тестирования
+    public static final String[] HEADERS = { COLUMNS.Persona_id.name(), COLUMNS.Date_time.name(), COLUMNS.Latitude.name(),
+            COLUMNS.Longitude.name(), COLUMNS.Area_id.name(), COLUMNS.Date.name(), COLUMNS.poiID.name()
     };
+    public static final StructType SCHEMA = new StructType()
+            .add(HEADERS[0], "int")
+            .add(HEADERS[1], "string")
+            .add(HEADERS[2], "double")
+            .add(HEADERS[3], "double")
+            .add(HEADERS[4], "int")
+            .add(HEADERS[5], "string");
+    private int persona_id;
 
 /*
     •	Идентификатор персоны
@@ -19,41 +28,38 @@ public class PersonaLocation implements Serializable {
     •	Идентификатор области
     •	Дата (ггггммдд) (Первый день месяца, за который есть данные)
 */
-
-    private int personaId;
-    private String dateTime;
+    private String date_time;
     private double latitude;
     private double longitude;
-    private int areaId;
+    private int area_id;
     private String date;
-
     public PersonaLocation() {}
 
-    public PersonaLocation(int personaId, String dateTime, double latitude, double longitude, int areaId, String date) {
-        this.personaId = personaId;
-        this.dateTime = dateTime;
+    public PersonaLocation(int persona_id, String date_time, double latitude, double longitude, int area_id, String date) {
+        this.persona_id = persona_id;
+        this.date_time = date_time;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.areaId = areaId;
+        this.area_id = area_id;
         this.date = date;
     }
 
     public PersonaLocation(CSVRecord record) {
-        this.personaId = Integer.parseInt(record.get(HEADERS[0]));
-        this.dateTime = record.get(HEADERS[1]);
+        this.persona_id = Integer.parseInt(record.get(HEADERS[0]));
+        this.date_time = record.get(HEADERS[1]);
         this.latitude = Double.parseDouble(record.get(HEADERS[2]));
         this.longitude = Double.parseDouble(record.get(HEADERS[3]));
-        this.areaId = Integer.parseInt(record.get(HEADERS[4]));
+        this.area_id = Integer.parseInt(record.get(HEADERS[4]));
         this.date = record.get(HEADERS[5]);
     }
 
     public PersonaLocation parseFromResultSet(ResultSet rsSelect) {
         try{
-            this.personaId = rsSelect.getInt(HEADERS[0]);
-            this.dateTime = rsSelect.getString(HEADERS[1]);
+            this.persona_id = rsSelect.getInt(HEADERS[0]);
+            this.date_time = rsSelect.getString(HEADERS[1]);
             this.latitude = rsSelect.getDouble(HEADERS[2]);
             this.longitude = rsSelect.getDouble(HEADERS[3]);
-            this.areaId = rsSelect.getInt(HEADERS[4]);
+            this.area_id = rsSelect.getInt(HEADERS[4]);
             this.date = rsSelect.getString(HEADERS[5]);
         } catch (Exception z){
             z.printStackTrace();
@@ -62,20 +68,20 @@ public class PersonaLocation implements Serializable {
         return this;
     }
 
-    public int getPersonaId() {
-        return personaId;
+    public int getPersona_id() {
+        return persona_id;
     }
 
-    public void setPersonaId(int personaId) {
-        this.personaId = personaId;
+    public void setPersona_id(int persona_id) {
+        this.persona_id = persona_id;
     }
 
-    public String getDateTime() {
-        return dateTime;
+    public String getDate_time() {
+        return date_time;
     }
 
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setDate_time(String date_time) {
+        this.date_time = date_time;
     }
 
     public double getLatitude() {
@@ -94,12 +100,12 @@ public class PersonaLocation implements Serializable {
         this.longitude = longitude;
     }
 
-    public int getAreaId() {
-        return areaId;
+    public int getArea_id() {
+        return area_id;
     }
 
-    public void setAreaId(int areaId) {
-        this.areaId = areaId;
+    public void setArea_id(int area_id) {
+        this.area_id = area_id;
     }
 
     public String getDate() {
@@ -108,5 +114,15 @@ public class PersonaLocation implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public enum COLUMNS {
+        Persona_id,
+        Date_time,
+        Latitude,
+        Longitude,
+        Area_id,
+        Date,
+        poiID //Для тестирования
     }
 }

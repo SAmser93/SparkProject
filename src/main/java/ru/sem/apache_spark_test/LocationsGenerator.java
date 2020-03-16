@@ -20,13 +20,13 @@ public class LocationsGenerator {
     private static void insertToCSV(CSVPrinter printer, PersonaLocation pl, PlaceOfInterest randomPOI){
         try {
             printer.printRecord(
-                    pl.getPersonaId(),
-                    pl.getDateTime(),
+                    pl.getPersona_id(),
+                    pl.getDate_time(),
                     pl.getLatitude(),
                     pl.getLatitude(),
-                    pl.getAreaId(),
+                    pl.getArea_id(),
                     pl.getDate(),
-                    randomPOI.getId()
+                    randomPOI.getPlace_id()
             );
         } catch (Exception z) {
             z.printStackTrace();
@@ -71,15 +71,15 @@ public class LocationsGenerator {
                     PlaceOfInterest randomPOI = places.get(ThreadLocalRandom.current().nextInt(places.size()-1));
                     PersonaLocation tempPl = new PersonaLocation(
                             i+1,
-                            randomPOI.getDate().substring(0, randomPOI.getDate().length() - 2)+"0"+ThreadLocalRandom.current().nextInt(1, 9),
+                            randomPOI.getDate().substring(0, randomPOI.getDate().length() - 2)+"0"+ThreadLocalRandom.current().nextInt(1, 9)+"_"+ThreadLocalRandom.current().nextInt(0, 23),
                             //окрестности выбранного poi
                             ThreadLocalRandom.current().nextDouble(randomPOI.getLatitude()-0.1f, randomPOI.getLatitude())+0.1f,
                             ThreadLocalRandom.current().nextDouble(randomPOI.getLongitude()-0.1f, randomPOI.getLongitude()+0.1f),
-                            randomPOI.getAreaId(),
+                            randomPOI.getArea_id(),
                             randomPOI.getDate()
                             );
                     insertToCSV(printer, tempPl, randomPOI);
-                    PlacesRecommenderDAO.insertLocation(tempPl);
+//                    PlacesRecommenderDAO.insertLocation(tempPl);
                 }
             }
             out.flush();

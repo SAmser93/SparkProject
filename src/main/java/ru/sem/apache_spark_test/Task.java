@@ -113,7 +113,7 @@ public class Task {
 
         //из каждой записи делаем пары: ключ (Area_id), значение (1 - как факт наличия в области)
         JavaPairRDD<Integer, Integer> pairs = locRDD.mapToPair(
-                (PersonaLocation poi) -> new Tuple2<>(poi.getAreaId(), 1)
+                (PersonaLocation poi) -> new Tuple2<>(poi.getArea_id(), 1)
         );
 
         JavaPairRDD<Integer, Integer> counts = pairs.reduceByKey(
