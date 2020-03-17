@@ -3,6 +3,8 @@ package ru.sem.apache_spark_test;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.sem.apache_spark_test.dao.PlacesRecommenderDAO;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
@@ -11,11 +13,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LocationsGenerator {
+
+    private static Logger logger = LogManager.getLogger(LocationsGenerator.class);
 
     private static void insertToCSV(CSVPrinter printer, PersonaLocation pl, PlaceOfInterest randomPOI){
         try {
@@ -35,8 +41,17 @@ public class LocationsGenerator {
 
     public static void main(String[] args) {
 
-        String poiCSVFilePath = System.getProperty("poi.csv","src/main/resources/places_of_interest.csv");
-        String pers_locCSVFilePath = System.getProperty("pl.csv","src/main/resources/persona_locations.csv");
+        String poiCSVFilePath = "";
+        String pers_locCSVFilePath = "";
+
+        try {
+            poiCSVFilePath = System.getProperty("poi.csv", Paths.get(ClassLoader.getSystemResource("places_of_interest.csv").toURI()).toString());
+            pers_locCSVFilePath = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
+        } catch (URISyntaxException e) {
+            logger.error("Error while opening files -> {}", e.getMessage());
+            System.exit(-1);
+        }
+
         ArrayList<PlaceOfInterest> places = new ArrayList<>();
 
         try {

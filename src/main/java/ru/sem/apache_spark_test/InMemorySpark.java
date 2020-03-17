@@ -11,16 +11,30 @@ import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 import ru.sem.apache_spark_test.spark.SparkQueries;
 
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
 public class InMemorySpark {
 
-    private static Logger logger = LogManager.getLogger(DataSource.class);
+    private static Logger logger = LogManager.getLogger(InMemorySpark.class);
 
-    private static final String POI_CSV_FILE_PATH = System.getProperty("poi.csv","src/main/resources/places_of_interest.csv");
-    private static final String PERS_LOC_CSV_FILE_PATH = System.getProperty("pl.csv","src/main/resources/persona_locations.csv");
+    private static String POI_CSV_FILE_PATH;
+    private static String PERS_LOC_CSV_FILE_PATH;
+
+    static {
+        try {
+            POI_CSV_FILE_PATH = System.getProperty("poi.csv", Paths.get(ClassLoader.getSystemResource("places_of_interest.csv").toURI()).toString());
+            PERS_LOC_CSV_FILE_PATH = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
+        } catch (URISyntaxException e) {
+            logger.error("Error while opening files -> {}", e.getMessage());
+            System.exit(-1);
+        }
+    }
+
 
     //"In-memory db"
     private static Dataset<Row> POIdf;
@@ -39,7 +53,7 @@ public class InMemorySpark {
         spark.conf().set("spark.driver.maxResultSize", "6g");
         spark.conf().set("spark.executor.memory", "4g");
         spark.conf().set("spark.driver.host", "localhost");
-
+        
         POIdf = spark.read()
                 //TODO: конфиги
                 .option("mode", "DROPMALFORMED")
