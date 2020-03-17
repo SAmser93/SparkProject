@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 
+@Deprecated
 public class DataSource {
 
     private static Logger logger = LogManager.getLogger(DataSource.class);

@@ -12,6 +12,7 @@ import scala.Tuple2;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class PlacesRecommender {
 
     /**
