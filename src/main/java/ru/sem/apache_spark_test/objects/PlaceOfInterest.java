@@ -7,7 +7,9 @@ import org.apache.spark.sql.types.StructType;
 
 public class PlaceOfInterest {
 
-    public static final String[] HEADERS = { "Place_id", "Name", "Category", "Description", "Latitude", "Longitude", "Area_id", "Date"};
+    public static final String[] HEADERS = { COLUMNS.Place_id.name(), COLUMNS.Name.name(), COLUMNS.Category.name(),
+            COLUMNS.Description.name(), COLUMNS.Latitude.name(), COLUMNS.Longitude.name(), COLUMNS.Area_id.name(),
+            COLUMNS.Date.name()};
     public static final StructType SCHEMA = new StructType()
             .add(HEADERS[0], "int")
             .add(HEADERS[1], "string")
@@ -17,6 +19,7 @@ public class PlaceOfInterest {
             .add(HEADERS[5], "double")
             .add(HEADERS[6], "int")
             .add(HEADERS[7], "string");
+    private int place_id;
 
 /*• Идентификатор места
   •	Название
@@ -26,8 +29,6 @@ public class PlaceOfInterest {
   •	Долгота (longitude)
   •	Идентификатор области
   •	Дата (ггггммдд) (Первый день месяца, за который есть данные)*/
-
-    private int place_id;
     private String name;
     private String category;
     private String description;
@@ -36,6 +37,9 @@ public class PlaceOfInterest {
     private int area_id;
 //    LocalDate date; //TODO привести
     private String date;
+
+    public PlaceOfInterest() {
+    }
 
     public PlaceOfInterest(int Place_id, String name, String category, String description, double latitude, double longitude, int area_id, String date) {
         this.place_id = Place_id;
@@ -132,6 +136,17 @@ public class PlaceOfInterest {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public enum COLUMNS {
+        Place_id,
+        Name,
+        Category,
+        Description,
+        Latitude,
+        Longitude,
+        Area_id,
+        Date
     }
 
 

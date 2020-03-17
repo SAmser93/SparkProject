@@ -13,6 +13,7 @@ import ru.sem.apache_spark_test.spark.SparkQueries;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 
 public class InMemorySpark {
 
@@ -88,9 +89,19 @@ public class InMemorySpark {
         logger.info("PLdf size after filter = {}", AreaPersLocDF.count());
 
         //2. Сортируем по популярности и выводим. Рекомендация места у меня будет - процент тех, кто в месте побывал
+        /*
+            - По корычам найти место
+            - Добавить его в общую мапу мест
+            - Просуммировать кол-во по этим местам
+            - Отсортировать
+            - Вывести какое-то кол-во, посчитать процент
+         */
 
+        List<Row> plList = AreaPersLocDF.collectAsList();
 
+        System.out.println(plList);
 
+//        SparkQueries.getPoiByCoordinates(AreaPersLocDF.limit(1));
 
 
     }

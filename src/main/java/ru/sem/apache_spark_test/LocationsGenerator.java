@@ -35,8 +35,8 @@ public class LocationsGenerator {
 
     public static void main(String[] args) {
 
-        String poiCSVFilePath = "src/main/resources/places_of_interest.csv";
-        String pers_locCSVFilePath = "src/main/resources/persona_locations.csv";
+        String poiCSVFilePath = System.getProperty("poi.csv","src/main/resources/places_of_interest.csv");
+        String pers_locCSVFilePath = System.getProperty("pl.csv","src/main/resources/persona_locations.csv");
         ArrayList<PlaceOfInterest> places = new ArrayList<>();
 
         try {

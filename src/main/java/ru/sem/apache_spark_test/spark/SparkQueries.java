@@ -3,6 +3,7 @@ package ru.sem.apache_spark_test.spark;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
+import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,5 +51,30 @@ public class SparkQueries {
                 ds.col(PersonaLocation.COLUMNS.Date_time.name())
                         .lt(to.format(Date_time_formatter))
         );
+    }
+
+    public static PlaceOfInterest getPoiByCoordinates(Dataset<Row> ds, double latitude, double longitude) {
+        Dataset<Row> poi = ds.select(
+                PlaceOfInterest.COLUMNS.Place_id.name()
+        ).filter(
+                ds.col(PlaceOfInterest.COLUMNS.Latitude.name())
+                .gt(latitude-0.1)
+        ).filter(
+                ds.col(PlaceOfInterest.COLUMNS.Latitude.name())
+                        .lt(latitude+0.1)
+        ).filter(
+                ds.col(PlaceOfInterest.COLUMNS.Longitude.name())
+                        .gt(longitude-0.1)
+        ).filter(
+                ds.col(PlaceOfInterest.COLUMNS.Longitude.name())
+                        .lt(longitude+0.1)
+        ).orderBy(
+                ds.col(PlaceOfInterest.COLUMNS.Date.name())
+                        .desc()
+        ).limit(1);
+
+        poi.show();
+
+        return new PlaceOfInterest();
     }
 }
