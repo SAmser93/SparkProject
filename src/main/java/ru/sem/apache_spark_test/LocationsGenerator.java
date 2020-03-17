@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,22 +22,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class LocationsGenerator {
 
     private static Logger logger = LogManager.getLogger(LocationsGenerator.class);
-
-    private static void insertToCSV(CSVPrinter printer, PersonaLocation pl, PlaceOfInterest randomPOI){
-        try {
-            printer.printRecord(
-                    pl.getPersona_id(),
-                    pl.getDate_time(),
-                    pl.getLatitude(),
-                    pl.getLongitude(),
-                    pl.getArea_id(),
-                    pl.getDate(),
-                    randomPOI.getPlace_id()
-            );
-        } catch (Exception z) {
-            z.printStackTrace();
-        }
-    }
 
     public static void main(String[] args) {
 
@@ -97,7 +82,7 @@ public class LocationsGenerator {
                             randomPOI.getArea_id(),
                             randomPOI.getDate()
                             );
-                    insertToCSV(printer, tempPl, randomPOI);
+                    tempPl.insertToCSV(printer);
 //                    PlacesRecommenderDAO.insertLocation(tempPl);
                 }
             }

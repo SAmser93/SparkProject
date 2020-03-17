@@ -1,15 +1,19 @@
 package ru.sem.apache_spark_test;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import ru.sem.apache_spark_test.objects.FinalResult;
 import ru.sem.apache_spark_test.objects.Persona;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 import ru.sem.apache_spark_test.spark.SparkQueries;
 
+import java.io.FileWriter;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -23,20 +27,33 @@ public class InMemorySpark {
 
     private static String POI_CSV_FILE_PATH;
     private static String PERS_LOC_CSV_FILE_PATH;
+    private static String FINAL_RES_CSV_FILE_PATH;
+    //"In-memory db"
+    private static Dataset<Row> POIdf;
+    private static Dataset<Row> PLdf;
 
     static {
         try {
             POI_CSV_FILE_PATH = System.getProperty("poi.csv", Paths.get(ClassLoader.getSystemResource("places_of_interest.csv").toURI()).toString());
-            PERS_LOC_CSV_FILE_PATH = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
-        } catch (URISyntaxException e) {
-            logger.error("Error while opening files -> {}", e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while opening places_of_interest.csv -> {}", e.getMessage());
             System.exit(-1);
         }
-    }
 
-    //"In-memory db"
-    private static Dataset<Row> POIdf;
-    private static Dataset<Row> PLdf;
+        try {
+            PERS_LOC_CSV_FILE_PATH = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
+        } catch (Exception e) {
+            logger.error("Error while opening persona_locations -> {}, it will be created", e.getMessage());
+            PERS_LOC_CSV_FILE_PATH = "src/main/resources/persona_locations.csv";
+        }
+
+        try {
+            FINAL_RES_CSV_FILE_PATH = System.getProperty("res.csv", Paths.get(ClassLoader.getSystemResource("final_result.csv").toURI()).toString());
+        } catch (Exception e) {
+            logger.error("Error while opening final_result -> {}, it will be created", e.getMessage());
+            FINAL_RES_CSV_FILE_PATH = "src/main/resources/final_result.csv";
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -124,7 +141,7 @@ public class InMemorySpark {
                     r.getDouble(r.fieldIndex(PersonaLocation.COLUMNS.Latitude.name())),
                     r.getDouble(r.fieldIndex(PersonaLocation.COLUMNS.Longitude.name()))
             );
-            if(temp != null){
+            if(temp != null) {
                 poiVisitsCount.merge(temp.getPlace_id(), 1, Integer::sum);
                 visits_total++;
             }
@@ -141,8 +158,42 @@ public class InMemorySpark {
 
         logger.info("sorted map -> {}", topTen);
 
-        //Формирование финального результата.
+        List<FinalResult> finalResults = new ArrayList<>();
 
+        //Формирование финального результата в формате csv
+        for(Map.Entry<Integer, Integer> e: topTen.entrySet()){
+            PlaceOfInterest poi = new PlaceOfInterest(
+                    POIdf.select("*")
+                            .filter(
+                                    POIdf.col(PlaceOfInterest.COLUMNS.Place_id.name())
+                                            .equalTo(e.getKey())
+                            )
+                            .limit(1)
+                            .collectAsList()
+                            .get(0)
+            );
+            FinalResult temp = new FinalResult(p.getId(), e.getKey(), ((double) e.getValue())/ visits_total,
+                    poi.getName(), poi.getDescription(), poi.getLatitude(), poi.getLongitude(), poi.getArea_id(), poi.getDate());
+            finalResults.add(temp);
+        }
+
+        logger.info("finalResults -> {}", finalResults);
+
+        try {
+            FileWriter out = new FileWriter(FINAL_RES_CSV_FILE_PATH);
+            CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT
+                    .withHeader(Arrays.toString(FinalResult.HEADERS))
+                    .withFirstRecordAsHeader());
+
+            printer.printRecord(FinalResult.HEADERS);
+            for(FinalResult f : finalResults){
+                f.insertToCSV(printer);
+            }
+            out.flush();
+            out.close();
+        } catch (Exception z) {
+            z.printStackTrace();
+        }
 
     }
 

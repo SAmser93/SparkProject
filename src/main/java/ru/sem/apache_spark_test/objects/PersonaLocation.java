@@ -1,5 +1,6 @@
 package ru.sem.apache_spark_test.objects;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.spark.sql.types.StructType;
 
@@ -124,5 +125,20 @@ public class PersonaLocation implements Serializable {
         Area_id,
         Date,
         poiID //Для тестирования
+    }
+
+    public void insertToCSV(CSVPrinter printer){
+        try {
+            printer.printRecord(
+                    this.persona_id,
+                    this.date_time,
+                    this.latitude,
+                    this.longitude,
+                    this.area_id,
+                    this.date
+            );
+        } catch (Exception z) {
+            z.printStackTrace();
+        }
     }
 }

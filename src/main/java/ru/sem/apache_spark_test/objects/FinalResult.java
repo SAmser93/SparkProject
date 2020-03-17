@@ -1,6 +1,10 @@
 package ru.sem.apache_spark_test.objects;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.spark.sql.types.StructType;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class FinalResult {
 
@@ -9,13 +13,15 @@ public class FinalResult {
             COLUMNS.Area_id.name(), COLUMNS.Date.name()
     };
     public static final StructType SCHEMA = new StructType()
-            .add(HEADERS[0], "int")
-            .add(HEADERS[1], "string")
+            .add(HEADERS[0], "string")
+            .add(HEADERS[1], "int")
             .add(HEADERS[2], "double")
-            .add(HEADERS[3], "double")
-            .add(HEADERS[4], "int")
-            .add(HEADERS[5], "string");
-    private int persona_id;
+            .add(HEADERS[3], "string")
+            .add(HEADERS[4], "string")
+            .add(HEADERS[5], "double")
+            .add(HEADERS[6], "double")
+            .add(HEADERS[7], "int")
+            .add(HEADERS[8], "string");
 
     /*
         •	Идентификатор персоны
@@ -28,6 +34,7 @@ public class FinalResult {
         •	Идентификатор области
         •	Дата
      */
+    private int persona_id;
     private int place_id;
     private double recommendation_ratio;
     private String name;
@@ -36,9 +43,6 @@ public class FinalResult {
     private double longitude;
     private int areaId;
     private String date;
-
-    public FinalResult() {
-    }
 
     public FinalResult(int persona_id, int place_id, double recommendation_ratio, String name, String description, double latitude, double longitude, int areaId, String date) {
         this.persona_id = persona_id;
@@ -122,6 +126,24 @@ public class FinalResult {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void insertToCSV(CSVPrinter printer){
+        try {
+            printer.printRecord(
+                    this.persona_id,
+                    this.place_id,
+                    NumberFormat.getPercentInstance(Locale.US).format(this.recommendation_ratio),
+                    this.name,
+                    this.description,
+                    this.latitude,
+                    this.longitude,
+                    this.areaId,
+                    this.date
+            );
+        } catch (Exception z) {
+            z.printStackTrace();
+        }
     }
 
     public enum COLUMNS {

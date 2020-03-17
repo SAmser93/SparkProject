@@ -6,7 +6,7 @@ import org.apache.spark.sql.types.StructType;
 
 //import java.time.LocalDate;
 
-public class PlaceOfInterest {
+public class PlaceOfInterest{
 
     public static final String[] HEADERS = { COLUMNS.Place_id.name(), COLUMNS.Name.name(), COLUMNS.Category.name(),
             COLUMNS.Description.name(), COLUMNS.Latitude.name(), COLUMNS.Longitude.name(), COLUMNS.Area_id.name(),
@@ -160,6 +160,21 @@ public class PlaceOfInterest {
         Area_id,
         Date
     }
+
+//    @Override
+//    public int compareTo(PlaceOfInterest other){
+//        if(this.place_id == other.place_id){
+//            return 1;
+//        }
+//        return 0;
+//    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (o == this) return true;
+//        if (o == null || o.getClass() != getClass()) return false;
+//        PlaceOfInterest e = (PlaceOfInterest) o;
+//        return place_id == e.getPlace_id();
+//    }
 
 
 }
