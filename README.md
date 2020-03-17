@@ -27,7 +27,7 @@ run this jar as
 
 Then run main app as
 
-```java -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -cp .\spark-places-recommender-jar-with-dependencies.jar ru.sem.apache_spark_test.InMemorySpark```
+```java -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -Dres.csv=*final result file path* -cp .\spark-places-recommender-jar-with-dependencies.jar ru.sem.apache_spark_test.InMemorySpark```
 
 ## Built With
 

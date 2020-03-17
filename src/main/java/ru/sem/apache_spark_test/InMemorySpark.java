@@ -14,8 +14,6 @@ import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 import ru.sem.apache_spark_test.spark.SparkQueries;
 
 import java.io.FileWriter;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
@@ -25,35 +23,12 @@ public class InMemorySpark {
 
     private static Logger logger = LogManager.getLogger(InMemorySpark.class);
 
-    private static String POI_CSV_FILE_PATH;
-    private static String PERS_LOC_CSV_FILE_PATH;
-    private static String FINAL_RES_CSV_FILE_PATH;
+    private static final String POI_CSV_FILE_PATH = System.getProperty("poi.csv", "src/main/resources/places_of_interest.csv");
+    private static final String PERS_LOC_CSV_FILE_PATH = System.getProperty("pl.csv", "src/main/resources/persona_locations.csv");
+    private static final String FINAL_RES_CSV_FILE_PATH = System.getProperty("res.csv", "src/main/resources/final_result.csv");
     //"In-memory db"
     private static Dataset<Row> POIdf;
     private static Dataset<Row> PLdf;
-
-    static {
-        try {
-            POI_CSV_FILE_PATH = System.getProperty("poi.csv", Paths.get(ClassLoader.getSystemResource("places_of_interest.csv").toURI()).toString());
-        } catch (Exception e) {
-            logger.error("Error while opening places_of_interest.csv -> {}", e.getMessage());
-            System.exit(-1);
-        }
-
-        try {
-            PERS_LOC_CSV_FILE_PATH = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
-        } catch (Exception e) {
-            logger.error("Error while opening persona_locations -> {}, it will be created", e.getMessage());
-            PERS_LOC_CSV_FILE_PATH = "src/main/resources/persona_locations.csv";
-        }
-
-        try {
-            FINAL_RES_CSV_FILE_PATH = System.getProperty("res.csv", Paths.get(ClassLoader.getSystemResource("final_result.csv").toURI()).toString());
-        } catch (Exception e) {
-            logger.error("Error while opening final_result -> {}, it will be created", e.getMessage());
-            FINAL_RES_CSV_FILE_PATH = "src/main/resources/final_result.csv";
-        }
-    }
 
     public static void main(String[] args) {
 
@@ -88,11 +63,10 @@ public class InMemorySpark {
         PLdf.printSchema();
 
         /*
-            TODO:
+            Общий алгоритм:
             Пример. Можно объединить персоны в группы, выявить для каждой группы множество мест. Далее предложить персонам из одной группы места для этой группы отсортированные тем или иным способом.
             1. Запрос на ИД персоны. По нему берём область и ищем по ней PLки за определённый срез (пока последний день/последняя неделя)
             2. Сортируем по популярности и выводим. Рекомендация места у меня будет - процент тех, кто в месте побывал
-            3. Предусмотреть, что объем данных может превышать несколько терабайт - ???
          */
 
         POIdf.show();

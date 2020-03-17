@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 public class PersonaLocation implements Serializable {
 
     public static final String[] HEADERS = { COLUMNS.Persona_id.name(), COLUMNS.Date_time.name(), COLUMNS.Latitude.name(),
-            COLUMNS.Longitude.name(), COLUMNS.Area_id.name(), COLUMNS.Date.name(), COLUMNS.poiID.name()
+            COLUMNS.Longitude.name(), COLUMNS.Area_id.name(), COLUMNS.Date.name()
     };
     public static final StructType SCHEMA = new StructType()
             .add(HEADERS[0], "int")
@@ -123,8 +123,7 @@ public class PersonaLocation implements Serializable {
         Latitude,
         Longitude,
         Area_id,
-        Date,
-        poiID //Для тестирования
+        Date
     }
 
     public void insertToCSV(CSVPrinter printer){

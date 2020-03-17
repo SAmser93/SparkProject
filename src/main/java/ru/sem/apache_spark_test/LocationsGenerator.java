@@ -3,9 +3,6 @@ package ru.sem.apache_spark_test;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import ru.sem.apache_spark_test.dao.PlacesRecommenderDAO;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 
@@ -13,34 +10,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LocationsGenerator {
 
-    private static Logger logger = LogManager.getLogger(LocationsGenerator.class);
-
     public static void main(String[] args) {
 
-        String poiCSVFilePath = "";
-        String pers_locCSVFilePath;
+        String poiCSVFilePath = System.getProperty("poi.csv", "src/main/resources/places_of_interest.csv");
+        String pers_locCSVFilePath = System.getProperty("pl.csv", "src/main/resources/persona_locations.csv");
 
-        try {
-            poiCSVFilePath = System.getProperty("poi.csv", Paths.get(ClassLoader.getSystemResource("places_of_interest.csv").toURI()).toString());
-        } catch (Exception e) {
-            logger.error("Error while opening places_of_interest.csv -> {}", e.getMessage());
-            System.exit(-1);
-        }
-
-        try {
-            pers_locCSVFilePath = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
-        } catch (Exception e) {
-            logger.error("Error while opening persona_locations -> {}, it will be created", e.getMessage());
-            pers_locCSVFilePath = "src/main/resources/persona_locations.csv";
-        }
         ArrayList<PlaceOfInterest> places = new ArrayList<>();
 
         try {
