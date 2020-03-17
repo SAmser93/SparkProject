@@ -16,6 +16,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class LocationsGenerator {
 
+    /**
+     * Генерация описаний местоположения
+     * @param args
+     */
     public static void main(String[] args) {
 
         String poiCSVFilePath = System.getProperty("poi.csv", "src/main/resources/places_of_interest.csv");

@@ -14,6 +14,11 @@ public class SparkQueries {
     private static final DateTimeFormatter Date_formatter = DateTimeFormatter.ofPattern("YYYYMMDD");
     private static final DateTimeFormatter Date_time_formatter = DateTimeFormatter.ofPattern("YYYYMMDD"+"_HH");
 
+    /**
+     * Вывод первых n строк датасета PersonaLocations
+     * @param ds - датасет PersonaLocation
+     * @param limit - кол-во строк
+     */
     public static void printPLDF(Dataset<Row> ds, int limit) {
         ds.select(PersonaLocation.COLUMNS.Persona_id.name(),
                 PersonaLocation.COLUMNS.Date_time.name(),
@@ -21,6 +26,12 @@ public class SparkQueries {
         ).limit(limit).show();
     }
 
+    /**
+     * Получить информацию о последнем известном местоположении персоны, которая запрашивает рекомендации
+     * @param ds - датасет PersonaLocation
+     * @param persona_id - идент. персоны
+     * @return area_id
+     */
     public static Dataset<Row> getLastKnownPersonaLocation (Dataset<Row> ds, int persona_id) {
         return ds.select(PersonaLocation.COLUMNS.Area_id.name())
                 .filter(
@@ -34,6 +45,14 @@ public class SparkQueries {
                 .limit(1);
     }
 
+    /**
+     * Возвращает все описания местоположения по срезу
+     * @param ds - датасет PersonaLocation
+     * @param area_id - идент. области
+     * @param from - дата начала среза
+     * @param to - дата конца среза
+     * @return все подходящие PersonaLocation
+     */
     public static Dataset<Row> getPersonaLocationsByAreaDate(Dataset<Row> ds, int area_id, LocalDateTime from, LocalDateTime to) {
         return ds.select(
                 PersonaLocation.COLUMNS.Persona_id.name(),
@@ -54,6 +73,14 @@ public class SparkQueries {
         );
     }
 
+    /**
+     * Получить объект PlaceOfInterest, примерно предполагая, что раз персона была в пределах какой-то достопримечательности,
+     * то она посещала эту достопримечательность (очень условные границы в +-0.1 градус широты и долготы)
+     * @param ds - датасет PlaceOfInterest
+     * @param latitude - широта искомого объекта
+     * @param longitude - долгота искомого объекта
+     * @return Искомый объект, если такой нашёлся, либо null
+     */
     public static PlaceOfInterest getPoiByCoordinates(Dataset<Row> ds, double latitude, double longitude) {
         Dataset<Row> poi = ds.select(
                 ds.col("*")
@@ -74,7 +101,6 @@ public class SparkQueries {
                         .desc()
         ).limit(1);
 
-//        poi.select(PlaceOfInterest.COLUMNS.Place_id.name()).show();
         List<Row> r = poi.select(poi.col("*")).collectAsList();
         if(r.size() > 0){
             try{
