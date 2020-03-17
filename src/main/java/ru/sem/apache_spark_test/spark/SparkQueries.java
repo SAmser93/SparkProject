@@ -7,6 +7,7 @@ import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class SparkQueries {
 
@@ -55,7 +56,7 @@ public class SparkQueries {
 
     public static PlaceOfInterest getPoiByCoordinates(Dataset<Row> ds, double latitude, double longitude) {
         Dataset<Row> poi = ds.select(
-                PlaceOfInterest.COLUMNS.Place_id.name()
+                ds.col("*")
         ).filter(
                 ds.col(PlaceOfInterest.COLUMNS.Latitude.name())
                 .gt(latitude-0.1)
@@ -73,8 +74,15 @@ public class SparkQueries {
                         .desc()
         ).limit(1);
 
-        poi.show();
-
-        return new PlaceOfInterest();
+//        poi.select(PlaceOfInterest.COLUMNS.Place_id.name()).show();
+        List<Row> r = poi.select(poi.col("*")).collectAsList();
+        if(r.size() > 0){
+            try{
+                return new PlaceOfInterest(r.get(0));
+            } catch (Exception z) {
+                z.printStackTrace();
+            }
+        }
+        return null;
     }
 }

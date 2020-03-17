@@ -5,18 +5,17 @@ import org.apache.logging.log4j.Logger;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import ru.sem.apache_spark_test.dao.DataSource;
 import ru.sem.apache_spark_test.objects.Persona;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 import ru.sem.apache_spark_test.spark.SparkQueries;
 
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemorySpark {
 
@@ -35,7 +34,6 @@ public class InMemorySpark {
         }
     }
 
-
     //"In-memory db"
     private static Dataset<Row> POIdf;
     private static Dataset<Row> PLdf;
@@ -53,7 +51,7 @@ public class InMemorySpark {
         spark.conf().set("spark.driver.maxResultSize", "6g");
         spark.conf().set("spark.executor.memory", "4g");
         spark.conf().set("spark.driver.host", "localhost");
-        
+
         POIdf = spark.read()
                 //TODO: конфиги
                 .option("mode", "DROPMALFORMED")
@@ -93,29 +91,57 @@ public class InMemorySpark {
         int area_id = (int)PersonAreaDF.collectAsList().get(0).get(0);
         logger.info("area_id = {}", area_id);
 
-        //ищем по ней PLки за определённый срез (пока последний день/последняя неделя)
+        //ищем по ней PL за определённый срез (в данном случае - за месяц)
         LocalDateTime to = LocalDateTime.of(2019, Month.FEBRUARY, 28, 0, 0);
         LocalDateTime from = to.minusMonths(1);
 
         Dataset<Row> AreaPersLocDF = SparkQueries.getPersonaLocationsByAreaDate(PLdf, area_id, from, to);
+        //Убираем свои посещения
+        AreaPersLocDF = AreaPersLocDF.filter(
+                AreaPersLocDF.col(PersonaLocation.COLUMNS.Persona_id.name()).notEqual(p.getId())
+        ).select("*");
         SparkQueries.printPLDF(AreaPersLocDF, 5);
 
         logger.info("PLdf size after filter = {}", AreaPersLocDF.count());
 
         //2. Сортируем по популярности и выводим. Рекомендация места у меня будет - процент тех, кто в месте побывал
         /*
-            - По корычам найти место
+            - По координатам найти место
             - Добавить его в общую мапу мест
             - Просуммировать кол-во по этим местам
             - Отсортировать
-            - Вывести какое-то кол-во, посчитать процент
          */
 
-        List<Row> plList = AreaPersLocDF.collectAsList();
+        //TODO: перенести на RDD
+        //Мапа вида "Ид_достопримечательности -> кол-во посещений
+        Map<Integer, Integer> poiVisitsCount = new HashMap<>();
+        int visits_total = 0;
 
+        List<Row> plList = AreaPersLocDF.select(PersonaLocation.COLUMNS.Longitude.name(), PersonaLocation.COLUMNS.Latitude.name()).collectAsList();
         System.out.println(plList);
+        for(Row r : plList) {
+            PlaceOfInterest temp = SparkQueries.getPoiByCoordinates(POIdf,
+                    r.getDouble(r.fieldIndex(PersonaLocation.COLUMNS.Latitude.name())),
+                    r.getDouble(r.fieldIndex(PersonaLocation.COLUMNS.Longitude.name()))
+            );
+            if(temp != null){
+                poiVisitsCount.merge(temp.getPlace_id(), 1, Integer::sum);
+                visits_total++;
+            }
+        }
 
-//        SparkQueries.getPoiByCoordinates(AreaPersLocDF.limit(1));
+        logger.info("not sorted map -> {}", poiVisitsCount);
+
+        Map<Integer,Integer> topTen =
+                poiVisitsCount.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(10)
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        logger.info("sorted map -> {}", topTen);
+
+        //Формирование финального результата.
 
 
     }

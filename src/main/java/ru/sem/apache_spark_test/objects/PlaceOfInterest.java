@@ -1,6 +1,7 @@
 package ru.sem.apache_spark_test.objects;
 
 import org.apache.commons.csv.CSVRecord;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructType;
 
 //import java.time.LocalDate;
@@ -72,6 +73,17 @@ public class PlaceOfInterest {
         this.longitude = Double.parseDouble(record.get(HEADERS[5]));
         this.area_id = Integer.parseInt(record.get(HEADERS[6]));
         this.date = record.get(HEADERS[7]);
+    }
+
+    public PlaceOfInterest(Row r) {
+        this.place_id = r.getInt(r.fieldIndex(HEADERS[0]));
+        this.name = r.getString(r.fieldIndex(HEADERS[1]));
+        this.category = r.getString(r.fieldIndex(HEADERS[2]));
+        this.description = r.getString(r.fieldIndex(HEADERS[3]));
+        this.latitude = r.getDouble(r.fieldIndex(HEADERS[4]));
+        this.longitude = r.getDouble(r.fieldIndex(HEADERS[5]));
+        this.area_id = r.getInt(r.fieldIndex(HEADERS[6]));
+        this.date = r.getString(r.fieldIndex(HEADERS[7]));
     }
 
     public int getPlace_id() {
