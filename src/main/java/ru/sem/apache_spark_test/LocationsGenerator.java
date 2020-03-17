@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +28,7 @@ public class LocationsGenerator {
                     pl.getPersona_id(),
                     pl.getDate_time(),
                     pl.getLatitude(),
-                    pl.getLatitude(),
+                    pl.getLongitude(),
                     pl.getArea_id(),
                     pl.getDate(),
                     randomPOI.getPlace_id()
@@ -42,16 +41,21 @@ public class LocationsGenerator {
     public static void main(String[] args) {
 
         String poiCSVFilePath = "";
-        String pers_locCSVFilePath = "";
+        String pers_locCSVFilePath;
 
         try {
             poiCSVFilePath = System.getProperty("poi.csv", Paths.get(ClassLoader.getSystemResource("places_of_interest.csv").toURI()).toString());
-            pers_locCSVFilePath = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
-        } catch (URISyntaxException e) {
-            logger.error("Error while opening files -> {}", e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error while opening places_of_interest.csv -> {}", e.getMessage());
             System.exit(-1);
         }
 
+        try {
+            pers_locCSVFilePath = System.getProperty("pl.csv", Paths.get(ClassLoader.getSystemResource("persona_locations.csv").toURI()).toString());
+        } catch (Exception e) {
+            logger.error("Error while opening persona_locations -> {}, it will be created", e.getMessage());
+            pers_locCSVFilePath = "src/main/resources/persona_locations.csv";
+        }
         ArrayList<PlaceOfInterest> places = new ArrayList<>();
 
         try {
@@ -70,7 +74,7 @@ public class LocationsGenerator {
             e.printStackTrace();
         }
 
-        PlacesRecommenderDAO.clearLocations();
+//        PlacesRecommenderDAO.clearLocations();
 
         try {
             FileWriter out = new FileWriter(pers_locCSVFilePath);
