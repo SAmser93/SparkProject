@@ -4,10 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.sem.apache_spark_test.objects.PersonaLocation;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +50,11 @@ public class PlacesRecommenderDAO {
             //TODO: batch update
             int i = 0;
             pstm.setInt(++i, pl.getPersona_id());
-            pstm.setString(++i, pl.getDate_time());
+            pstm.setTimestamp(++i, Timestamp.valueOf(pl.getDate_time()));
             pstm.setDouble(++i, pl.getLatitude());
             pstm.setDouble(++i, pl.getLongitude());
             pstm.setInt(++i, pl.getArea_id());
-            pstm.setString(++i, pl.getDate());
+            pstm.setTimestamp(++i, Timestamp.valueOf(pl.getDate().atStartOfDay()));
             pstm.executeUpdate();
         } catch (Exception z) {
             z.printStackTrace();

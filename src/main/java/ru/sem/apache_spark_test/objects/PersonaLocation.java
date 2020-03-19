@@ -4,10 +4,11 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.spark.sql.types.StructType;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public class PersonaLocation implements Serializable {
+public class PersonaLocation extends AbstractSparkObject {
 
     public static final String[] HEADERS = { COLUMNS.Persona_id.name(), COLUMNS.Date_time.name(), COLUMNS.Latitude.name(),
             COLUMNS.Longitude.name(), COLUMNS.Area_id.name(), COLUMNS.Date.name()
@@ -29,14 +30,14 @@ public class PersonaLocation implements Serializable {
     •	Идентификатор области
     •	Дата (ггггммдд) (Первый день месяца, за который есть данные)
 */
-    private String date_time;
+    private LocalDateTime date_time;
     private double latitude;
     private double longitude;
     private int area_id;
-    private String date;
+    private LocalDate date;
     public PersonaLocation() {}
 
-    public PersonaLocation(int persona_id, String date_time, double latitude, double longitude, int area_id, String date) {
+    public PersonaLocation(int persona_id, LocalDateTime date_time, double latitude, double longitude, int area_id, LocalDate date) {
         this.persona_id = persona_id;
         this.date_time = date_time;
         this.latitude = latitude;
@@ -47,21 +48,21 @@ public class PersonaLocation implements Serializable {
 
     public PersonaLocation(CSVRecord record) {
         this.persona_id = Integer.parseInt(record.get(HEADERS[0]));
-        this.date_time = record.get(HEADERS[1]);
+        this.date_time = LocalDateTime.parse(record.get(HEADERS[1]), Date_time_formatter);
         this.latitude = Double.parseDouble(record.get(HEADERS[2]));
         this.longitude = Double.parseDouble(record.get(HEADERS[3]));
         this.area_id = Integer.parseInt(record.get(HEADERS[4]));
-        this.date = record.get(HEADERS[5]);
+        this.date = LocalDate.parse(record.get(HEADERS[5]), Date_formatter);
     }
 
     public PersonaLocation parseFromResultSet(ResultSet rsSelect) {
         try{
             this.persona_id = rsSelect.getInt(HEADERS[0]);
-            this.date_time = rsSelect.getString(HEADERS[1]);
+            this.date_time = LocalDateTime.parse(rsSelect.getString(HEADERS[1]), Date_time_formatter);
             this.latitude = rsSelect.getDouble(HEADERS[2]);
             this.longitude = rsSelect.getDouble(HEADERS[3]);
             this.area_id = rsSelect.getInt(HEADERS[4]);
-            this.date = rsSelect.getString(HEADERS[5]);
+            this.date = LocalDate.parse(rsSelect.getString(HEADERS[5]), Date_formatter);
         } catch (Exception z){
             z.printStackTrace();
             return null;
@@ -77,11 +78,11 @@ public class PersonaLocation implements Serializable {
         this.persona_id = persona_id;
     }
 
-    public String getDate_time() {
+    public LocalDateTime getDate_time() {
         return date_time;
     }
 
-    public void setDate_time(String date_time) {
+    public void setDate_time(LocalDateTime date_time) {
         this.date_time = date_time;
     }
 
@@ -109,12 +110,28 @@ public class PersonaLocation implements Serializable {
         this.area_id = area_id;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    @Override
+    public void insertToCSV(CSVPrinter printer){
+        try {
+            printer.printRecord(
+                    this.persona_id,
+                    this.date_time.format(Date_time_formatter),
+                    this.latitude,
+                    this.longitude,
+                    this.area_id,
+                    this.date.format(Date_formatter)
+            );
+        } catch (Exception z) {
+            z.printStackTrace();
+        }
     }
 
     public enum COLUMNS {
@@ -124,20 +141,5 @@ public class PersonaLocation implements Serializable {
         Longitude,
         Area_id,
         Date
-    }
-
-    public void insertToCSV(CSVPrinter printer){
-        try {
-            printer.printRecord(
-                    this.persona_id,
-                    this.date_time,
-                    this.latitude,
-                    this.longitude,
-                    this.area_id,
-                    this.date
-            );
-        } catch (Exception z) {
-            z.printStackTrace();
-        }
     }
 }

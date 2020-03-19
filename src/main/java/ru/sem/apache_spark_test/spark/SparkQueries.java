@@ -6,13 +6,9 @@ import ru.sem.apache_spark_test.objects.PersonaLocation;
 import ru.sem.apache_spark_test.objects.PlaceOfInterest;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SparkQueries {
-
-    private static final DateTimeFormatter Date_formatter = DateTimeFormatter.ofPattern("YYYYMMDD");
-    private static final DateTimeFormatter Date_time_formatter = DateTimeFormatter.ofPattern("YYYYMMDD"+"_HH");
 
     /**
      * Вывод первых n строк датасета PersonaLocations
@@ -66,10 +62,10 @@ public class SparkQueries {
                         .equalTo(area_id)
         ).filter(
                 ds.col(PersonaLocation.COLUMNS.Date_time.name())
-                        .gt(from.format(Date_time_formatter))
+                        .gt(from.format(PersonaLocation.Date_time_formatter))
         ).filter(
                 ds.col(PersonaLocation.COLUMNS.Date_time.name())
-                        .lt(to.format(Date_time_formatter))
+                        .lt(to.format(PersonaLocation.Date_time_formatter))
         );
     }
 

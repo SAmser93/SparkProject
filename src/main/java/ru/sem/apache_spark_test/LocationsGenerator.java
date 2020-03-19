@@ -59,7 +59,7 @@ public class LocationsGenerator {
                     PlaceOfInterest randomPOI = places.get(ThreadLocalRandom.current().nextInt(places.size()-1));
                     PersonaLocation tempPl = new PersonaLocation(
                             i+1,
-                            randomPOI.getDate().substring(0, randomPOI.getDate().length() - 2)+"0"+ThreadLocalRandom.current().nextInt(1, 9)+"_"+ThreadLocalRandom.current().nextInt(0, 23),
+                            randomPOI.getDate().atTime(ThreadLocalRandom.current().nextInt(0, 23), 0, 0),
                             //окрестности выбранного poi
                             ThreadLocalRandom.current().nextDouble(randomPOI.getLatitude()-0.1f, randomPOI.getLatitude())+0.1f,
                             ThreadLocalRandom.current().nextDouble(randomPOI.getLongitude()-0.1f, randomPOI.getLongitude()+0.1f),

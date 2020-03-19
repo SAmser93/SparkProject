@@ -1,12 +1,13 @@
 package ru.sem.apache_spark_test.objects;
 
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructType;
 
-//import java.time.LocalDate;
+import java.time.LocalDate;
 
-public class PlaceOfInterest{
+public class PlaceOfInterest extends AbstractSparkObject{
 
     public static final String[] HEADERS = { COLUMNS.Place_id.name(), COLUMNS.Name.name(), COLUMNS.Category.name(),
             COLUMNS.Description.name(), COLUMNS.Latitude.name(), COLUMNS.Longitude.name(), COLUMNS.Area_id.name(),
@@ -36,13 +37,12 @@ public class PlaceOfInterest{
     private double latitude;
     private double longitude;
     private int area_id;
-//    LocalDate date; //TODO привести
-    private String date;
+    private LocalDate date;
 
     public PlaceOfInterest() {
     }
 
-    public PlaceOfInterest(int Place_id, String name, String category, String description, double latitude, double longitude, int area_id, String date) {
+    public PlaceOfInterest(int Place_id, String name, String category, String description, double latitude, double longitude, int area_id, LocalDate date) {
         this.place_id = Place_id;
         this.name = name;
         this.category = category;
@@ -61,7 +61,7 @@ public class PlaceOfInterest{
         this.latitude = Double.parseDouble(csvLine[4]);
         this.longitude = Double.parseDouble(csvLine[5]);
         this.area_id = Integer.parseInt(csvLine[6]);
-        this.date = csvLine[7];
+        this.date = LocalDate.parse(csvLine[7], Date_formatter);
     }
 
     public PlaceOfInterest(CSVRecord record) {
@@ -72,7 +72,7 @@ public class PlaceOfInterest{
         this.latitude = Double.parseDouble(record.get(HEADERS[4]));
         this.longitude = Double.parseDouble(record.get(HEADERS[5]));
         this.area_id = Integer.parseInt(record.get(HEADERS[6]));
-        this.date = record.get(HEADERS[7]);
+        this.date = LocalDate.parse(record.get(HEADERS[7]), Date_formatter);
     }
 
     public PlaceOfInterest(Row r) {
@@ -83,7 +83,7 @@ public class PlaceOfInterest{
         this.latitude = r.getDouble(r.fieldIndex(HEADERS[4]));
         this.longitude = r.getDouble(r.fieldIndex(HEADERS[5]));
         this.area_id = r.getInt(r.fieldIndex(HEADERS[6]));
-        this.date = r.getString(r.fieldIndex(HEADERS[7]));
+        this.date = LocalDate.parse(r.getString(r.fieldIndex(HEADERS[7])), Date_formatter);
     }
 
     public int getPlace_id() {
@@ -142,12 +142,30 @@ public class PlaceOfInterest{
         this.area_id = area_id;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    @Override
+    public void insertToCSV(CSVPrinter printer){
+        try {
+            printer.printRecord(
+                    this.place_id,
+                    this.name ,
+            this.category,
+            this.description ,
+            this.latitude,
+            this.longitude,
+            this.area_id,
+            this.date.format(Date_formatter)
+            );
+        } catch (Exception z) {
+            z.printStackTrace();
+        }
     }
 
     public enum COLUMNS {

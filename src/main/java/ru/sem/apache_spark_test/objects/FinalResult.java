@@ -4,9 +4,10 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.spark.sql.types.StructType;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Locale;
 
-public class FinalResult {
+public class FinalResult extends AbstractSparkObject {
 
     public static final String[] HEADERS = { COLUMNS.Persona_id.name(), COLUMNS.Place_id.name(), COLUMNS.Recommendation_ratio.name(),
             COLUMNS.Name.name(), COLUMNS.Description.name(),  COLUMNS.Latitude.name(), COLUMNS.Longitude.name(),
@@ -42,9 +43,9 @@ public class FinalResult {
     private double latitude;
     private double longitude;
     private int areaId;
-    private String date;
+    private LocalDate date;
 
-    public FinalResult(int persona_id, int place_id, double recommendation_ratio, String name, String description, double latitude, double longitude, int areaId, String date) {
+    public FinalResult(int persona_id, int place_id, double recommendation_ratio, String name, String description, double latitude, double longitude, int areaId, LocalDate date) {
         this.persona_id = persona_id;
         this.place_id = place_id;
         this.recommendation_ratio = recommendation_ratio;
@@ -120,14 +121,15 @@ public class FinalResult {
         this.areaId = areaId;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
+    @Override
     public void insertToCSV(CSVPrinter printer){
         try {
             printer.printRecord(
@@ -139,7 +141,7 @@ public class FinalResult {
                     this.latitude,
                     this.longitude,
                     this.areaId,
-                    this.date
+                    this.date.format(Date_formatter)
             );
         } catch (Exception z) {
             z.printStackTrace();
