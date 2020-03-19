@@ -23,7 +23,7 @@ public class SparkPlacesInfo {
      * @param p - объект персоны
      * @param from - дата начала среза
      * @param to - дата конца среза
-     * @return - список объектов FinalResult
+     * @return - список объектов {@link FinalResult}
      */
     public static List<FinalResult> getInfoAboutLocations(Persona p, LocalDateTime from, LocalDateTime to){
 

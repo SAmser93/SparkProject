@@ -61,11 +61,11 @@ public class SparkQueries {
 
     /**
      * Возвращает все описания местоположения по срезу
-     * @param ds - датасет PersonaLocation
+     * @param ds - датасет {@link PersonaLocation}
      * @param area_id - идент. области
      * @param from - дата начала среза
      * @param to - дата конца среза
-     * @return все подходящие PersonaLocation
+     * @return все подходящие {@link PersonaLocation}
      */
     public static Dataset<Row> getPersonaLocationsByAreaDate(Dataset<Row> ds, int area_id, LocalDateTime from, LocalDateTime to) {
         return ds.select(
@@ -88,9 +88,9 @@ public class SparkQueries {
     }
 
     /**
-     * Получить объект PlaceOfInterest, примерно предполагая, что раз персона была в пределах какой-то достопримечательности,
+     * Получить объект {@link PlaceOfInterest}, примерно предполагая, что раз персона была в пределах какой-то достопримечательности,
      * то она посещала эту достопримечательность (очень условные границы в +-0.1 градус широты и долготы)
-     * @param ds - датасет PlaceOfInterest
+     * @param ds - датасет {@link PlaceOfInterest}
      * @param latitude - широта искомого объекта
      * @param longitude - долгота искомого объекта
      * @return Искомый объект, если такой нашёлся, либо null
