@@ -24,6 +24,7 @@ First, you will need to generate set of random persona locations. To do put plac
 run this jar as
 
 ```java -Dlog4j.configuration=log4j2.xml -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -cp .\spark-places-recommender-jar-with-dependencies.jar ru.sem.apache_spark_test.LocationsGenerator```
+You can adjust number of random values via parameters -Dmin.persons, -Dmax.persons, -Dmin.places, -Dmax.places
 
 Then run main app as
 
