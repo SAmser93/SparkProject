@@ -27,7 +27,7 @@ public class SparkPlacesInfo {
      */
     public static List<FinalResult> getInfoAboutLocations(Persona p, LocalDateTime from, LocalDateTime to){
 
-        //POI только за выбранную дату. В планах - и без дубликатов
+        //POI только за выбранную дату и без дубликатов.
         Dataset<Row> filteredPOIs = SparkQueries.filerPOIByDate(InMemorySpark.POIdf, from, to);
 //        filteredPOIs.select("*").show();
         //1 Запрос на ИД персоны. По нему берём область

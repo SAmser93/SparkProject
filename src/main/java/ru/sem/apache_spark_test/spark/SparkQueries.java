@@ -11,8 +11,8 @@ import java.util.List;
 public class SparkQueries {
 
     /**
-     * Вывод первых n строк датасета PersonaLocations
-     * @param ds - датасет PersonaLocation
+     * Вывод первых n строк датасета {@link PersonaLocation}
+     * @param ds - датасет {@link PersonaLocation}
      * @param limit - кол-во строк
      */
     public static void printPLDF(Dataset<Row> ds, int limit) {
@@ -22,6 +22,13 @@ public class SparkQueries {
         ).limit(limit).show();
     }
 
+    /**
+     * POI только за выбранную дату и без дубликатов.
+     * @param ds - датасет {@link PlaceOfInterest}
+     * @param from - дата начала среза
+     * @param to - дата конца
+     * @return - отфильтрованный датасет
+     */
     public static Dataset<Row> filerPOIByDate(Dataset<Row> ds, LocalDateTime from, LocalDateTime to){
         return ds.select("*")
                 .filter(
@@ -30,12 +37,12 @@ public class SparkQueries {
                 ).filter(
                         ds.col(PlaceOfInterest.COLUMNS.Date.name())
                                 .$less$eq(to.format(PersonaLocation.Date_formatter))
-                );
+                ).dropDuplicates(PlaceOfInterest.COLUMNS.Latitude.name(), PlaceOfInterest.COLUMNS.Longitude.name());
     }
 
     /**
      * Получить информацию о последнем известном местоположении персоны, которая запрашивает рекомендации
-     * @param ds - датасет PersonaLocation
+     * @param ds - датасет {@link PersonaLocation}
      * @param persona_id - идент. персоны
      * @return area_id
      */
