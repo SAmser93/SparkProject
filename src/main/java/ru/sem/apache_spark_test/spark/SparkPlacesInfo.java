@@ -26,6 +26,10 @@ public class SparkPlacesInfo {
      * @return - список объектов FinalResult
      */
     public static List<FinalResult> getInfoAboutLocations(Persona p, LocalDateTime from, LocalDateTime to){
+
+        //POI только за выбранную дату. В планах - и без дубликатов
+        Dataset<Row> filteredPOIs = SparkQueries.filerPOIByDate(InMemorySpark.POIdf, from, to);
+//        filteredPOIs.select("*").show();
         //1 Запрос на ИД персоны. По нему берём область
         Dataset<Row> PersonAreaDF = SparkQueries.getLastKnownPersonaLocation(InMemorySpark.PLdf, p.getId());
         PersonAreaDF.show();
@@ -58,7 +62,7 @@ public class SparkPlacesInfo {
         List<Row> plList = AreaPersLocDF.select(PersonaLocation.COLUMNS.Longitude.name(), PersonaLocation.COLUMNS.Latitude.name()).collectAsList();
         System.out.println(plList);
         for(Row r : plList) {
-            PlaceOfInterest temp = SparkQueries.getPoiByCoordinates(InMemorySpark.POIdf,
+            PlaceOfInterest temp = SparkQueries.getPoiByCoordinates(filteredPOIs,
                     r.getDouble(r.fieldIndex(PersonaLocation.COLUMNS.Latitude.name())),
                     r.getDouble(r.fieldIndex(PersonaLocation.COLUMNS.Longitude.name()))
             );
@@ -84,9 +88,9 @@ public class SparkPlacesInfo {
         //Формирование финального результата в формате csv
         for(Map.Entry<Integer, Integer> e: topTen.entrySet()){
             PlaceOfInterest poi = new PlaceOfInterest(
-                    InMemorySpark.POIdf.select("*")
+                    filteredPOIs.select("*")
                             .filter(
-                                    InMemorySpark.POIdf.col(PlaceOfInterest.COLUMNS.Place_id.name())
+                                    filteredPOIs.col(PlaceOfInterest.COLUMNS.Place_id.name())
                                             .equalTo(e.getKey())
                             )
                             .limit(1)

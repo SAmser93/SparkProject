@@ -22,6 +22,17 @@ public class SparkQueries {
         ).limit(limit).show();
     }
 
+    public static Dataset<Row> filerPOIByDate(Dataset<Row> ds, LocalDateTime from, LocalDateTime to){
+        return ds.select("*")
+                .filter(
+                        ds.col(PlaceOfInterest.COLUMNS.Date.name())
+                                .$greater$eq(from.format(PersonaLocation.Date_formatter))
+                ).filter(
+                        ds.col(PlaceOfInterest.COLUMNS.Date.name())
+                                .$less$eq(to.format(PersonaLocation.Date_formatter))
+                );
+    }
+
     /**
      * Получить информацию о последнем известном местоположении персоны, которая запрашивает рекомендации
      * @param ds - датасет PersonaLocation
