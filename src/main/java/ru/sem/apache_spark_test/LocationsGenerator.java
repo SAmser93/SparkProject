@@ -22,6 +22,13 @@ public class LocationsGenerator {
      */
     public static void main(String[] args) {
 
+        //Для указания кол-ва случайнео генерируемых персон
+        final int minPersons = Integer.parseInt(System.getProperty("min.persons","7"));
+        final int maxPersons = Integer.parseInt(System.getProperty("max.persons","15"));
+        //Для указания кол-ва случайнео генерируемых мест на одну персону
+        final int minPlaces = Integer.parseInt(System.getProperty("min.places","2"));
+        final int maxPlaces = Integer.parseInt(System.getProperty("max.places","5"));
+
         String poiCSVFilePath = System.getProperty("poi.csv", "src/main/resources/places_of_interest.csv");
         String pers_locCSVFilePath = System.getProperty("pl.csv", "src/main/resources/persona_locations.csv");
 
@@ -51,10 +58,10 @@ public class LocationsGenerator {
                     .withHeader(Arrays.toString(PersonaLocation.HEADERS))
                     .withFirstRecordAsHeader());
             printer.printRecord(PersonaLocation.HEADERS);
-            int personsNum = ThreadLocalRandom.current().nextInt(7, 15);
+            int personsNum = ThreadLocalRandom.current().nextInt(minPersons, maxPersons);
             System.out.println("personsNum = " + personsNum);
             for(int i = 0; i < personsNum; i++) {
-                int placesNum = ThreadLocalRandom.current().nextInt(2, 5);
+                int placesNum = ThreadLocalRandom.current().nextInt(minPlaces, maxPlaces);
                 for(int j = 0; j < placesNum; j++) {
                     PlaceOfInterest randomPOI = places.get(ThreadLocalRandom.current().nextInt(places.size()-1));
                     PersonaLocation tempPl = new PersonaLocation(
