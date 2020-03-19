@@ -23,11 +23,15 @@ To build .jar package use "clean package" command in maven
 First, you will need to generate set of random persona locations. To do put places_of_interest.csv file somewhere and 
 run this jar as
 
-```java -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -cp .\spark-places-recommender-jar-with-dependencies.jar ru.sem.apache_spark_test.LocationsGenerator```
+```java -Dlog4j.configuration=log4j2.xml -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -cp .\spark-places-recommender-jar-with-dependencies.jar ru.sem.apache_spark_test.LocationsGenerator```
 
 Then run main app as
 
-```java -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -Dres.csv=*final result file path* -cp .\spark-places-recommender-jar-with-dependencies.jar ru.sem.apache_spark_test.InMemorySpark```
+```java -Dlog4j.configuration=log4j2.xml -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -Dres.csv=*final result file path* -cp .\spark-places-recommender-jar-with-dependencies.jar ru.sem.apache_spark_test.InMemorySpark```
+
+To run with spark-submit use
+
+```spark-submit --class ru.sem.apache_spark_test.InMemorySpark --conf 'spark.executor.extraJavaOptions=-Dlog4j.configuration=log4j2.xml -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -Dres.csv=*final result file path*' --conf 'spark.driver.extraJavaOptions=-Dlog4j.configuration=log4j2.xml -Dpoi.csv=*path_to_places_of_interest.csv* -Dpl.csv=*persona_locations.csv* -Dres.csv=*final result file path*' ./spark-places-recommender-jar-with-dependencies.jar```
 
 ## Built With
 
